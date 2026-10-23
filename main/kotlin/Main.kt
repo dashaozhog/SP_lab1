@@ -2,7 +2,8 @@
 // Властивості оголосіть у головному конструкторі (val та var),
 // додайте значення за замовчуванням та блок init
 
-import kotlin.coroutines.*
+import kotlinx.coroutines.*
+import java.time.LocalDateTime
 
 
 lateinit var elements: List<Atom>
@@ -81,7 +82,7 @@ fun checkSynthesis(result: SynthesisResult){
     }
 }
 
-fun main() {
+fun main() = runBlocking {
     println("--- Створення екземплярів ---")
     // Тут створіть об'єкти ваших класів...
     var hydrogen = Atom("Hydrogen", "H", 1, 1.007941, -259.14f, -252.87f, 0.08988f, 120, "colorless", "description" )
@@ -138,6 +139,8 @@ isotope of the element.""")
     checkSynthesis(result1)
     checkSynthesis(result2)
 
+    // LABA 1
+
     // Додайте до змінної колекції новий елемент за допомогою методу
     //add та продемонструйте застосування операторів + і - для отримання нової
     //колекції на основі наявної. Побудуйте асоціативний масив Map, що пов'язує
@@ -148,6 +151,8 @@ isotope of the element.""")
     val mutElements = mutableListOf(hydrogen, oxygen, calcium, carbon, sulfur)
 
     mutElements.add(calcium2)
+
+    mutElements -= calcium2
 
     var coll2 = mutElements+hydrogen
 
@@ -163,19 +168,42 @@ isotope of the element.""")
         println("${g.key}: ${g.value}")
     }
 
-     var sunstances = listOf(h2so4.compounds, calciumCarbonate.compounds).flatMap { it -> it.keys }
+     var substances = listOf(h2so4.compounds, calciumCarbonate.compounds).flatMap { it -> it.keys } // опрацьовано ксі елементи
 
-    var seqElements = elements.asSequence().map{it.atomicMass}.filter{it>15}.first()
+    var seqElements = elements.asSequence().map{it.atomicMass}.filter{it>15}.first() // опрацьовано лише 2 - повернено перший результат, який задовільняє умову фільтру
 
+// Тут викличте loadData(), а потім processData()...
+    println(LocalDateTime.now())
+    val data = load()
+    process(data)
+    println(LocalDateTime.now())
+
+    println("--- launch ---")
+// Тут запустіть дві незалежні корутини за допомогою launch...
+    launch{
+        load()
+    }
+    launch {
+        process(elements)
+    }
+    println()
 }
 suspend fun load(): List<Atom>{
-    println("Loading your data...")
+    println("Loading your data...[${LocalDateTime.now()}]")
     for(i in 1..10){
         print("-")
+        delay(1000L)
     }
-    println("Loading completed")
+    println("\nLoading completed at ${LocalDateTime.now()}")
     return elements;
-
-    TODO()
 }
+
+suspend fun process(data: List<Atom>) : List<Atom>{
+    println("Processing your data...[${LocalDateTime.now()}]")
+    delay(3000L)
+    var processedData = data.asSequence().filter{it.color=="colorless"}.toList()
+    println("Processed at ${LocalDateTime.now()}")
+    return processedData;
+}
+
 
