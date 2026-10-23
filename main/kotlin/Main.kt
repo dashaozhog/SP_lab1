@@ -168,12 +168,14 @@ isotope of the element.""")
         println("${g.key}: ${g.value}")
     }
 
-     var substances = listOf(h2so4.compounds, calciumCarbonate.compounds).flatMap { it -> it.keys } // опрацьовано ксі елементи
+     var substances = listOf(h2so4.compounds, calciumCarbonate.compounds)
+    val flatSubstances = substances.flatMap { it -> it.keys }
 
+    var notSeqElements = elements.map{it.atomicMass}.filter{it>15}.first() // опрацьовано ксі елементи
     var seqElements = elements.asSequence().map{it.atomicMass}.filter{it>15}.first() // опрацьовано лише 2 - повернено перший результат, який задовільняє умову фільтру
 
 // Тут викличте loadData(), а потім processData()...
-    println(LocalDateTime.now())
+
     val data = load()
     process(data)
     println(LocalDateTime.now())
